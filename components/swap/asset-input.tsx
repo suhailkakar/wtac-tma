@@ -26,7 +26,7 @@ const AssetInput = memo<AssetInputProps>(
     );
 
     const formattedBalance = formatDisplayNumber(token.balance);
-    const formattedFiatValue = formatDisplayNumber(fiatValue, 2);
+    const formattedFiatValue = fiatValue; // Don't re-format, use the already formatted value from context
 
     return (
       <div className="bg-white rounded-2xl p-4 border border-gray-100">

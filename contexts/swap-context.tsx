@@ -237,28 +237,28 @@ export function SwapProvider({
   const fiatValue = useMemo(() => {
     const numValue = parseFloat(state.inputValue || "0");
     const fiatAmount = numValue * tokenPrice;
-    
+
     if (numValue === 0) {
       return "0.00";
     }
-    
+
     if (fiatAmount > 0 && fiatAmount < 0.01) {
-      return "< 0.01";
+      return " <0.1";
     }
-    
+
     return fiatAmount.toFixed(2);
   }, [state.inputValue, tokenPrice]);
 
   const outputFiatValue = useMemo(() => {
     const numValue = parseFloat(state.estimatedOutput || "0");
     const fiatAmount = numValue * tokenPrice;
-    
+
     if (numValue === 0) {
       return "0.00";
     }
-    
+
     if (fiatAmount > 0 && fiatAmount < 0.01) {
-      return "< 0.01";
+      return " <0.1";
     }
 
     return fiatAmount.toFixed(2);

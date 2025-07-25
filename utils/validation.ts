@@ -116,6 +116,16 @@ export function sanitizeNumericInput(value: string): string {
     return sanitized;
   }
 
+  // Preserve decimal digits while user is typing (don't remove trailing zeros if input is short)
+  const inputDecimalIndex = sanitized.indexOf(".");
+  if (inputDecimalIndex !== -1 && sanitized.length - inputDecimalIndex <= 7) {
+    // If it's a valid number and not too many decimal places, keep as-is
+    const num = parseFloat(sanitized);
+    if (!isNaN(num) && isFinite(num)) {
+      return sanitized;
+    }
+  }
+
   const num = parseFloat(sanitized);
   if (!isNaN(num) && isFinite(num)) {
     const fixedNum = Math.round(num * 1e8) / 1e8;

@@ -8,7 +8,7 @@ import Image from "next/image";
 const AssetOutputSimple = memo<AssetOutputProps>(
   ({ token, value, fiatValue, isLoading = false }) => {
     const formattedValue = formatDisplayNumber(value);
-    const formattedFiatValue = formatDisplayNumber(fiatValue, 2);
+    const formattedFiatValue = fiatValue; // Don't re-format, use the already formatted value from context
     const formattedBalance = formatDisplayNumber(token.balance);
 
     return (
