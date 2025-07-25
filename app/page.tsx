@@ -221,7 +221,14 @@ export default function Home() {
 
   return (
     <div className="max-w-2xl w-full mx-auto relative min-h-screen flex flex-col bg-white border border-gray-100">
-      <Header />
+      <Header 
+        onConnectWallet={handleConnectWallet}
+        onSwap={handleSwap}
+        isTransacting={isTransacting}
+        transactionProgress={transactionProgress}
+        canSwap={canSwap}
+        inputValue={inputValue}
+      />
 
       <div className="px-4">
         <AssetInput
@@ -254,27 +261,10 @@ export default function Home() {
           disabled={isLoading}
         />
 
-        <div className="mb-4">
-          <NumericKeypad
-            onKeyPress={handleKeyPress}
-            onBackspace={handleBackspace}
-            disabled={isLoading}
-          />
-        </div>
-
-        <ActionButton
-          text={
-            !userFriendlyAddress
-              ? "Connect Wallet"
-              : isTransacting
-              ? transactionProgress || "Unwrapping..."
-              : inputValue && parseFloat(inputValue) > 0
-              ? `Unwrap ${inputValue} TAC`
-              : "Unwrap Token"
-          }
-          onClick={handleSwap}
-          disabled={(!canSwap && !!userFriendlyAddress) || isTransacting}
-          isLoading={isTransacting}
+        <NumericKeypad
+          onKeyPress={handleKeyPress}
+          onBackspace={handleBackspace}
+          disabled={isLoading}
         />
       </div>
     </div>

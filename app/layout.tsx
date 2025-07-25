@@ -4,7 +4,6 @@ import "./globals.css";
 import { TonConnectProvider } from "@/providers/ton-connect";
 import { SwapProvider } from "@/contexts/swap-context";
 import { TacSdkProvider } from "@/contexts/tac-sdk-context";
-import ErrorBoundary from "@/components/error-boundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,13 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable}   bg-white `}>
-        <ErrorBoundary>
-          <TonConnectProvider>
-            <TacSdkProvider>
-              <SwapProvider>{children}</SwapProvider>
-            </TacSdkProvider>
-          </TonConnectProvider>
-        </ErrorBoundary>
+        <TonConnectProvider>
+          <TacSdkProvider>
+            <SwapProvider>{children}</SwapProvider>
+          </TacSdkProvider>
+        </TonConnectProvider>
       </body>
     </html>
   );
