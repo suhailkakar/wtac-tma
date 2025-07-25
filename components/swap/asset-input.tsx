@@ -3,6 +3,7 @@
 import { memo, useCallback } from "react";
 import { AssetInputProps } from "@/types";
 import { formatDisplayNumber } from "@/utils/validation";
+import Image from "next/image";
 
 const AssetInput = memo<AssetInputProps>(
   ({
@@ -10,7 +11,6 @@ const AssetInput = memo<AssetInputProps>(
     token,
     fiatValue,
     onValueChange,
-    onTokenSelect,
     isReadOnly = true,
     error,
     maxLength = 20,
@@ -69,45 +69,22 @@ const AssetInput = memo<AssetInputProps>(
             )}
           </div>
 
-          {onTokenSelect ? (
-            <button
-              onClick={onTokenSelect}
-              className="flex items-center space-x-2 bg-white border border-gray-100 rounded-full px-3 py-2 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              aria-label={`Select ${token.symbol} token`}
-            >
-              <img
-                src={token.icon}
-                alt={`${token.name} logo`}
-                className="w-6 h-6 rounded-full"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = "none";
-                  target.nextElementSibling?.classList.remove("hidden");
-                }}
-              />
-              <div className="w-6 h-6 bg-blue-500 rounded-full items-center justify-center text-white text-xs font-bold hidden">
-                {token.symbol.slice(0, 2)}
-              </div>
-              <span className="font-medium">{token.symbol}</span>
-            </button>
-          ) : (
-            <div className="flex items-center space-x-2 bg-white border border-gray-100 rounded-full px-3 py-2">
-              <img
-                src={token.icon}
-                alt={`${token.name} logo`}
-                className="w-6 h-6 rounded-full"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = "none";
-                  target.nextElementSibling?.classList.remove("hidden");
-                }}
-              />
-              <div className="w-6 h-6 bg-blue-500 rounded-full items-center justify-center text-white text-xs font-bold hidden">
-                {token.symbol.slice(0, 2)}
-              </div>
-              <span className="font-medium">{token.symbol}</span>
-            </div>
-          )}
+          <div className="flex items-center space-x-2 bg-white border border-gray-100 rounded-full px-3 py-2">
+            <Image
+              width={24}
+              height={24}
+              src={"/tac-token-logo.png"}
+              alt={`${token.name} logo`}
+              className="w-6 h-6 rounded-full"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+                target.nextElementSibling?.classList.remove("hidden");
+              }}
+            />
+
+            <span className="font-medium">{token.symbol}</span>
+          </div>
         </div>
 
         <div

@@ -3,6 +3,7 @@
 import { memo } from "react";
 import { AssetOutputProps } from "@/types";
 import { formatDisplayNumber } from "@/utils/validation";
+import Image from "next/image";
 
 const AssetOutputSimple = memo<AssetOutputProps>(
   ({ token, value, fiatValue, isLoading = false }) => {
@@ -31,8 +32,10 @@ const AssetOutputSimple = memo<AssetOutputProps>(
           </div>
 
           <div className="flex items-center space-x-2 bg-white border border-gray-100 rounded-full px-3 py-2">
-            <img
-              src={token.icon}
+            <Image
+              width={24}
+              height={24}
+              src={"/tac-token-logo.png"}
               alt={`${token.name} logo`}
               className="w-6 h-6 rounded-full"
               onError={(e) => {
@@ -41,9 +44,6 @@ const AssetOutputSimple = memo<AssetOutputProps>(
                 target.nextElementSibling?.classList.remove("hidden");
               }}
             />
-            <div className="w-6 h-6 bg-blue-500 rounded-full items-center justify-center text-white text-xs font-bold hidden">
-              {token.symbol.slice(0, 2)}
-            </div>
             <span className="font-medium">{token.symbol}</span>
           </div>
         </div>
