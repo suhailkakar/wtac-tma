@@ -18,27 +18,17 @@ export const TVM_TAC_ADDRESS =
 export const WTAC_CONVERT_PROXY_ADDRESS =
   "0x6F8B46897E9ad550339784131853a8a9482767d2";
 
-/**
- * Validate TON address format
- */
 function validateTonAddress(address: string): boolean {
   // TON address format: workchain:address (0: or -1: followed by 64 hex chars)
   const tonAddressRegex = /^(-1|0):[0-9A-Fa-f]{64}$/;
   return tonAddressRegex.test(address);
 }
 
-/**
- * Validate Ethereum address format
- */
 function validateEthereumAddress(address: string): boolean {
-  // Ethereum address format: 0x followed by 40 hex chars
   const ethAddressRegex = /^0x[0-9A-Fa-f]{40}$/;
   return ethAddressRegex.test(address);
 }
 
-/**
- * Validate all contract addresses at startup
- */
 function validateContractAddresses(): void {
   if (!validateTonAddress(TVM_WTAC_ADDRESS)) {
     throw new Error(`Invalid WTAC contract address: ${TVM_WTAC_ADDRESS}`);
@@ -47,11 +37,12 @@ function validateContractAddresses(): void {
     throw new Error(`Invalid TAC contract address: ${TVM_TAC_ADDRESS}`);
   }
   if (!validateEthereumAddress(WTAC_CONVERT_PROXY_ADDRESS)) {
-    throw new Error(`Invalid proxy contract address: ${WTAC_CONVERT_PROXY_ADDRESS}`);
+    throw new Error(
+      `Invalid proxy contract address: ${WTAC_CONVERT_PROXY_ADDRESS}`
+    );
   }
 }
 
-// Validate addresses immediately
 validateContractAddresses();
 
 interface TokenBalance {
@@ -71,9 +62,6 @@ interface WithdrawalResult {
   result: any;
 }
 
-/**
- * Get WTAC token balance for a given address
- */
 export async function getWtacBalance(
   tacSdk: TacSdk,
   address: string
@@ -103,9 +91,6 @@ export async function getWtacBalance(
   }
 }
 
-/**
- * Get TAC token balance for a given address
- */
 export async function getTacBalance(
   tacSdk: TacSdk,
   address: string
@@ -135,9 +120,6 @@ export async function getTacBalance(
   }
 }
 
-/**
- * Get both WTAC and TAC balances for a given address
- */
 export async function getAllBalances(
   tacSdk: TacSdk,
   address: string
@@ -169,9 +151,6 @@ export async function getAllBalances(
   }
 }
 
-/**
- * Wait for transaction confirmations
- */
 async function waitForConfirmations(
   tacSdk: TacSdk,
   transactionLinker: any,
@@ -182,9 +161,9 @@ async function waitForConfirmations(
   let confirmations = 0;
   let attempts = 0;
   let consecutiveFailures = 0;
-  const maxAttempts = 60; // 10 minutes
+  const maxAttempts = 60;
   const maxConsecutiveFailures = 5;
-  const baseDelay = 10000; // 10 seconds
+  const baseDelay = 10000;
 
   console.log(`Starting confirmation tracking for transaction...`);
   progressCallback?.("Processing...");
@@ -199,7 +178,7 @@ async function waitForConfirmations(
 
       if (status === "SUCCESSFUL") {
         confirmations++;
-        consecutiveFailures = 0; // Reset failure counter
+        consecutiveFailures = 0;
         console.log(`✓ Confirmation ${confirmations}/${requiredConfirmations}`);
       } else if (status === "FAILED") {
         console.log("❌ Transaction failed");
@@ -207,7 +186,7 @@ async function waitForConfirmations(
         return false;
       } else if (status === "PENDING") {
         console.log("⏳ Transaction still pending...");
-        consecutiveFailures = 0; // Reset failure counter for pending status
+        consecutiveFailures = 0;
       }
 
       if (confirmations >= requiredConfirmations) {
@@ -215,28 +194,30 @@ async function waitForConfirmations(
         return true;
       }
 
-      // Exponential backoff for failed attempts
-      const delay = consecutiveFailures > 0 
-        ? baseDelay * Math.min(Math.pow(2, consecutiveFailures), 8) 
-        : baseDelay;
+      const delay =
+        consecutiveFailures > 0
+          ? baseDelay * Math.min(Math.pow(2, consecutiveFailures), 8)
+          : baseDelay;
 
       await new Promise((resolve) => setTimeout(resolve, delay));
       attempts++;
     } catch (error) {
       consecutiveFailures++;
       console.warn(
-        `Confirmation check failed (attempt ${attempts + 1}, consecutive failures: ${consecutiveFailures}):`,
+        `Confirmation check failed (attempt ${
+          attempts + 1
+        }, consecutive failures: ${consecutiveFailures}):`,
         error
       );
 
-      // If too many consecutive failures, give up early
       if (consecutiveFailures >= maxConsecutiveFailures) {
-        console.error("Too many consecutive failures, aborting confirmation tracking");
+        console.error(
+          "Too many consecutive failures, aborting confirmation tracking"
+        );
         progressCallback?.("Network connection issues");
         return false;
       }
 
-      // Exponential backoff for errors
       const delay = baseDelay * Math.min(Math.pow(2, consecutiveFailures), 8);
       await new Promise((resolve) => setTimeout(resolve, delay));
       attempts++;
@@ -245,14 +226,10 @@ async function waitForConfirmations(
 
   console.log(`⚠️ Timeout after ${maxAttempts} attempts`);
   progressCallback?.("Processing timeout - transaction may still complete");
-  
-  // Return true if we have some confirmations, even if not all required
+
   return confirmations > 0;
 }
 
-/**
- * Withdraw WTAC tokens to TAC
- */
 export async function withdrawWtacToTac(
   tacSdk: TacSdk,
   tonConnectUI: TonConnectUI,
@@ -319,7 +296,7 @@ export async function withdrawWtacToTac(
     }
 
     return {
-      transactionHash: result.transactionHash || "unknown",
+      transactionHash: "unknown",
       confirmed: true,
       result: result,
     };
@@ -329,9 +306,6 @@ export async function withdrawWtacToTac(
   }
 }
 
-/**
- * Parse input amount to BigInt with decimals
- */
 export function parseWtacAmount(amount: string, decimals: number = 18): bigint {
   if (!amount || amount.trim() === "" || amount === "0") {
     throw new Error("Amount cannot be empty or zero");

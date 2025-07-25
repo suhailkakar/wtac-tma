@@ -46,11 +46,13 @@ const AssetInput = memo<AssetInputProps>(
               autoComplete="off"
               spellCheck={false}
               aria-label={`${token.symbol} amount input`}
-              aria-describedby={error ? "input-error" : `${token.symbol}-balance`}
+              aria-describedby={
+                error ? "input-error" : `${token.symbol}-balance`
+              }
               aria-invalid={error ? "true" : "false"}
               aria-required="true"
               role="spinbutton"
-              aria-valuemin="0"
+              aria-valuemin={0}
               aria-valuenow={parseFloat(value) || 0}
             />
             <div className="text-sm text-gray-500 mt-1">
@@ -108,7 +110,7 @@ const AssetInput = memo<AssetInputProps>(
           )}
         </div>
 
-        <div 
+        <div
           id={`${token.symbol}-balance`}
           className="text-right text-sm text-gray-500 mt-2"
           aria-label={`Available balance: ${formattedBalance} ${token.symbol}`}

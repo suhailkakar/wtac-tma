@@ -15,9 +15,6 @@ export const VALIDATION_RULES = {
 const NUMERIC_PATTERN = /^[0-9]*\.?[0-9]*$/;
 const LEADING_ZEROS_PATTERN = /^0+(?=\d)/;
 
-/**
- * Validates numeric input for token amounts
- */
 export function validateNumericInput(value: string): ValidationResult {
   const errors: ValidationError[] = [];
 
@@ -86,9 +83,6 @@ export function validateNumericInput(value: string): ValidationResult {
   };
 }
 
-/**
- * Sanitizes numeric input by removing invalid characters and fixing precision issues
- */
 export function sanitizeNumericInput(value: string): string {
   if (!value) return "0";
 
@@ -132,9 +126,6 @@ export function sanitizeNumericInput(value: string): string {
   return sanitized;
 }
 
-/**
- * Validates if user has sufficient balance for transaction
- */
 export function validateSufficientBalance(
   inputAmount: string,
   availableBalance: string
@@ -175,9 +166,6 @@ export function validateSufficientBalance(
   };
 }
 
-/**
- * Formats number for display with proper decimal places
- */
 export function formatDisplayNumber(
   value: string | number,
   maxDecimals: number = 9
@@ -196,9 +184,6 @@ export function formatDisplayNumber(
   return formatted.replace(/\.?0+$/, "");
 }
 
-/**
- * Checks if input string represents a valid positive number
- */
 export function isValidPositiveNumber(value: string): boolean {
   const num = parseFloat(value);
   return !isNaN(num) && num > 0 && isFinite(num);

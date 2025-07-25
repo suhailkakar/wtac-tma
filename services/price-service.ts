@@ -11,15 +11,11 @@ interface CachedPrice extends PriceData {
 }
 
 const CACHE_DURATION = 5 * 60 * 1000;
-const STALE_DURATION = 30 * 60 * 1000;
 
 class PriceService {
   private cache = new Map<TokenSymbol, PriceData>();
   private pendingRequests = new Map<TokenSymbol, Promise<number>>();
 
-  /**
-   * Get cached price if available and not stale
-   */
   private getCachedPrice(symbol: TokenSymbol): CachedPrice | null {
     const cached = this.cache.get(symbol);
 
@@ -34,37 +30,54 @@ class PriceService {
     };
   }
 
-  /**
-   * Fetch price from CoinGecko API
-   */
   private async fetchFromCoinGecko(): Promise<number> {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=tac&vs_currencies=USD"
+        "https://api.coingecko.com/api/v3/simple/price?ids=tac&vs_currencies=USD",
+        {
+          signal: controller.signal,
+          headers: {
+            Accept: "application/json",
+            "User-Agent": "WTAC-Unwrap-App/1.0",
+          },
+        }
       );
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        throw new Error("CoinGecko API failed");
+        throw new Error(
+          `CoinGecko API failed: ${response.status} ${response.statusText}`
+        );
       }
 
       const data = await response.json();
-
       const tacPrice = data.tac?.usd;
 
-      if (typeof tacPrice === "number" && tacPrice > 0) {
-        return tacPrice;
+      if (typeof tacPrice !== "number" || isNaN(tacPrice) || tacPrice <= 0) {
+        throw new Error("Invalid price data from CoinGecko");
       }
 
-      throw new Error("Invalid price data from CoinGecko");
+      const cachedPrice = this.getCachedPrice("TAC");
+      if (
+        cachedPrice &&
+        Math.abs(tacPrice - cachedPrice.price) / cachedPrice.price > 0.5
+      ) {
+        console.warn(
+          `Large price change detected: ${cachedPrice.price} -> ${tacPrice}`
+        );
+      }
+
+      return tacPrice;
     } catch (error) {
       console.error("CoinGecko API error:", error);
       return this.getFallbackPrice();
     }
   }
 
-  /**
-   * Get fallback price when API fails
-   */
   private getFallbackPrice(): number {
     if (typeof window !== "undefined") {
       const cached = localStorage.getItem("tac-price-fallback");
@@ -80,9 +93,6 @@ class PriceService {
     return 0.0012;
   }
 
-  /**
-   * Store fallback price in localStorage
-   */
   private storeFallbackPrice(price: number): void {
     if (typeof window !== "undefined") {
       localStorage.setItem(
@@ -95,9 +105,6 @@ class PriceService {
     }
   }
 
-  /**
-   * Fetch fresh price data
-   */
   private async fetchPrice(symbol: TokenSymbol): Promise<number> {
     if (symbol !== "TAC" && symbol !== "WTAC") {
       throw new Error(`Price fetching not supported for ${symbol}`);
@@ -123,9 +130,6 @@ class PriceService {
     return price;
   }
 
-  /**
-   * Get token price with caching
-   */
   async getPrice(symbol: TokenSymbol): Promise<number> {
     const cached = this.getCachedPrice(symbol);
 
@@ -147,25 +151,6 @@ class PriceService {
     return pricePromise;
   }
 
-  /**
-   * Get multiple prices at once
-   */
-  async getPrices(
-    symbols: TokenSymbol[]
-  ): Promise<Record<TokenSymbol, number>> {
-    const pricePromises = symbols.map(async (symbol) => {
-      const price = await this.getPrice(symbol);
-      return [symbol, price] as const;
-    });
-
-    const results = await Promise.all(pricePromises);
-
-    return Object.fromEntries(results) as Record<TokenSymbol, number>;
-  }
-
-  /**
-   * Force refresh price (ignore cache)
-   */
   async refreshPrice(symbol: TokenSymbol): Promise<number> {
     this.cache.delete(symbol);
     this.pendingRequests.delete(symbol);
@@ -173,25 +158,16 @@ class PriceService {
     return this.getPrice(symbol);
   }
 
-  /**
-   * Get cached price without making network request
-   */
   getCachedPriceSync(symbol: TokenSymbol): number | null {
     const cached = this.getCachedPrice(symbol);
     return cached?.price || null;
   }
 
-  /**
-   * Clear all cached prices
-   */
   clearCache(): void {
     this.cache.clear();
     this.pendingRequests.clear();
   }
 
-  /**
-   * Get cache stats for debugging
-   */
   getCacheStats(): Record<string, any> {
     const stats: Record<string, any> = {};
 
