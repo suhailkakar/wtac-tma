@@ -103,8 +103,17 @@ export function sanitizeNumericInput(value: string): string {
     sanitized = "0" + sanitized;
   }
 
-  if (!sanitized || sanitized === ".") {
+  if (!sanitized) {
     return "0";
+  }
+  
+  if (sanitized === ".") {
+    return "0.";
+  }
+
+  // Preserve trailing decimal point for user input
+  if (sanitized.endsWith(".") && !sanitized.includes("..")) {
+    return sanitized;
   }
 
   const num = parseFloat(sanitized);

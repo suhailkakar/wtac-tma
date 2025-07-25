@@ -52,7 +52,6 @@ const AssetInput = memo<AssetInputProps>(
               aria-invalid={error ? "true" : "false"}
               aria-required="true"
               role="spinbutton"
-              aria-valuemin={0}
               aria-valuenow={parseFloat(value) || 0}
             />
             <div className="text-sm text-gray-500 mt-1">

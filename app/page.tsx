@@ -87,7 +87,7 @@ export default function Home() {
       const currentValue = inputValue;
       let newValue: string;
 
-      if (currentValue === "0" && key !== ".") {
+      if (currentValue === "0" && key !== "." && key !== "0") {
         newValue = key;
       } else {
         newValue = currentValue + key;

@@ -52,8 +52,8 @@ const NumericKeypad = memo<NumericKeypadProps>(
                 transition-all duration-150 ease-out
                 ${
                   disabled
-                    ? " text-gray-400 cursor-not-allowed"
-                    : "50 text-gray-900  "
+                    ? "bg-gray-50 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-50 text-gray-900 hover:bg-gray-100 active:bg-gray-200"
                 }
                 ${isRippling ? "transform scale-95" : "transform scale-100"}
               `}

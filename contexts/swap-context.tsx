@@ -186,16 +186,13 @@ export function SwapProvider({
 
         const balances = await getAllBalances(tacSdk, userAddress);
 
-        // Only update if we're still refreshing (prevent stale updates)
-        if (isRefreshingBalances) {
-          dispatch({
-            type: "UPDATE_BALANCES",
-            payload: {
-              inputBalance: balances.wtac.formatted,
-              outputBalance: balances.tac.formatted,
-            },
-          });
-        }
+        dispatch({
+          type: "UPDATE_BALANCES",
+          payload: {
+            inputBalance: balances.wtac.formatted,
+            outputBalance: balances.tac.formatted,
+          },
+        });
       } catch (error) {
         console.error("Failed to fetch balances:", error);
         // Don't update state on error to prevent showing stale data
@@ -203,7 +200,7 @@ export function SwapProvider({
         setIsRefreshingBalances(false);
       }
     },
-    [isRefreshingBalances]
+    []
   );
 
   const validateBalance = useCallback(() => {
