@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { LogOut } from "lucide-react";
 import { useTonAddress, useTonConnectUI } from "@tonconnect/ui-react";
 import ClientWrapper from "./client-wrapper";
 
@@ -30,6 +31,10 @@ function HeaderContent({
     }
   };
 
+  const handleDisconnect = () => {
+    tonConnectUI.disconnect();
+  };
+
   const getButtonText = () => {
     if (isTransacting && transactionProgress) {
       return transactionProgress;
@@ -58,22 +63,34 @@ function HeaderContent({
         </div>
 
         <ClientWrapper fallback={null}>
-          <button
-            onClick={handleButtonClick}
-            disabled={isTransacting || (!!userFriendlyAddress && !canSwap)}
-            className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${
-              isTransacting || (!!userFriendlyAddress && !canSwap)
-                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                : !userFriendlyAddress
-                ? "bg-primary hover:bg-primary/80 text-white"
-                : "bg-primary hover:bg-primary/80 text-white"
-            }`}
-          >
-            {isTransacting && (
-              <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin inline-block mr-2"></div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleButtonClick}
+              disabled={isTransacting || (!!userFriendlyAddress && !canSwap)}
+              className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${
+                isTransacting || (!!userFriendlyAddress && !canSwap)
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : !userFriendlyAddress
+                  ? "bg-primary hover:bg-primary/80 text-white"
+                  : "bg-primary hover:bg-primary/80 text-white"
+              }`}
+            >
+              {isTransacting && (
+                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin inline-block mr-2"></div>
+              )}
+              {getButtonText()}
+            </button>
+
+            {userFriendlyAddress && (
+              <button
+                onClick={handleDisconnect}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                title="Disconnect Wallet"
+              >
+                <LogOut className="w-4 h-4 text-gray-600" />
+              </button>
             )}
-            {getButtonText()}
-          </button>
+          </div>
         </ClientWrapper>
       </div>
     </header>
