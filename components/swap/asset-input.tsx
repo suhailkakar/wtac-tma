@@ -37,12 +37,12 @@ const AssetInput = memo<AssetInputProps>(
               value={value}
               onChange={handleInputChange}
               placeholder="0"
-              readOnly={isReadOnly}
+              readOnly={true}
               className={`text-3xl font-medium bg-transparent border-none outline-none w-full ${
                 error ? "text-red-500" : "text-gray-900"
               }`}
               maxLength={maxLength}
-              inputMode="decimal"
+              inputMode="none"
               autoComplete="off"
               spellCheck={false}
               aria-label={`${token.symbol} amount input`}
