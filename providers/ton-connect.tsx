@@ -7,8 +7,7 @@ export function TonConnectProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const manifestUrl =
-    "https://raw.githubusercontent.com/TacBuild/first-force/refs/heads/main/ton-manifest.json";
+  const manifestUrl = "https://wtac-tma.vercel.app/tonconnect-manifest.json";
 
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
