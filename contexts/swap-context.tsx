@@ -189,8 +189,8 @@ export function SwapProvider({
         dispatch({
           type: "UPDATE_BALANCES",
           payload: {
-            inputBalance: balances.wtac.formatted,
-            outputBalance: balances.tac.formatted,
+            inputBalance: balances.wtac.balance,
+            outputBalance: balances.tac.balance,
           },
         });
       } catch (error) {
@@ -219,12 +219,16 @@ export function SwapProvider({
   }, [state.inputValue, state.inputToken.balance, setError, clearError]);
 
   const canSwap = useMemo(() => {
+    const amount = parseFloat(state.inputValue || "0");
+    const balance = parseFloat(state.inputToken.balance || "0");
+    const epsilon = 1e-9; // Small tolerance for floating point precision
+    
     return (
       !state.isLoading &&
       !isTransacting &&
       !state.error &&
       isValidPositiveNumber(state.inputValue) &&
-      parseFloat(state.inputValue) <= parseFloat(state.inputToken.balance)
+      amount <= balance + epsilon
     );
   }, [
     state.isLoading,

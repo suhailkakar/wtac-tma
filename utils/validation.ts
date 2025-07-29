@@ -163,7 +163,9 @@ export function validateSufficientBalance(
     return { isValid: false, errors };
   }
 
-  if (amount > balance) {
+  // Use epsilon comparison for floating point precision issues
+  const epsilon = 1e-9; // Small tolerance for floating point precision
+  if (amount > balance + epsilon) {
     errors.push({
       field: "balance",
       message: "Insufficient balance",
@@ -187,7 +189,7 @@ export function validateSufficientBalance(
 
 export function formatDisplayNumber(
   value: string | number,
-  maxDecimals: number = 9
+  maxDecimals: number = 10
 ): string {
   if (!value || value === "0") return "0";
 

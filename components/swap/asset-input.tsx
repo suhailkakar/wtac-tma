@@ -25,7 +25,7 @@ const AssetInput = memo<AssetInputProps>(
       [onValueChange, maxLength]
     );
 
-    const formattedBalance = formatDisplayNumber(token.balance);
+    const formattedBalance = formatDisplayNumber(token.balance, 10);
     const formattedFiatValue = fiatValue; // Don't re-format, use the already formatted value from context
 
     return (

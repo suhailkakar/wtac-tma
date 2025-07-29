@@ -9,7 +9,7 @@ const AssetOutputSimple = memo<AssetOutputProps>(
   ({ token, value, fiatValue, isLoading = false }) => {
     const formattedValue = formatDisplayNumber(value);
     const formattedFiatValue = fiatValue; // Don't re-format, use the already formatted value from context
-    const formattedBalance = formatDisplayNumber(token.balance);
+    const formattedBalance = formatDisplayNumber(token.balance, 10);
 
     return (
       <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
